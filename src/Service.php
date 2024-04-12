@@ -730,7 +730,7 @@ class Service
 
         $ids = [];
         do {
-            $results = $this->openSearchClient->search($params)->asArray();
+            $results = $this->openSearchClient->search($params);
             $total = $results['hits']['total'];
             $searchAfter = end($results['hits']['hits'])['sort'];
             $search->setSearchAfter($searchAfter);
