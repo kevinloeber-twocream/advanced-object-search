@@ -826,13 +826,10 @@ class Service
             $search->setSearchAfter($searchAfter);
             $params['body'] = $search->toArray();
             $ids = array_unique(array_merge($this->extractIdsFromResult($results), $ids));
-
         } while ($total !== count($ids));
 
         return $ids;
     }
-
-
 
     public function getDoFilter($classId, array $filters, $fullTextQuery): Search
     {
