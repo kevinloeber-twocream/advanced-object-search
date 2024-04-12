@@ -140,9 +140,12 @@ class AdminController extends UserAwareController
             $list->setObjectTypes(['object', 'folder', 'variant']);
 
             $conditionFilters = [];
-            $idField = DataObjectService::getVersionDependentDatabaseColumnName('id');
-            $keyColumn = DataObjectService::getVersionDependentDatabaseColumnName('key');
-            $pathColumn = DataObjectService::getVersionDependentDatabaseColumnName('path');
+
+            // this is necessary to properly reference the columns from main query in the workspaces related sub-query
+            $listingTableName = $list->getDao()->getTableName();
+            $idField = $listingTableName . '.' . DataObjectService::getVersionDependentDatabaseColumnName('id');
+            $keyColumn = $listingTableName . '.' . DataObjectService::getVersionDependentDatabaseColumnName('key');
+            $pathColumn = $listingTableName . '.' . DataObjectService::getVersionDependentDatabaseColumnName('path');
             if (!$this->getPimcoreUser()->isAdmin()) {
                 $userIds = $this->getPimcoreUser()->getRoles();
                 $userIds[] = $this->getPimcoreUser()->getId();
@@ -156,11 +159,9 @@ class AdminController extends UserAwareController
 
             if (!empty($ids)) {
                 $conditionFilters[] = $idField . ' IN (' . implode(',', $ids) . ')';
-                //$list->setCondition($idField . " IN (" . implode(",", $ids) . ")");
                 $list->setOrderKey(' FIELD(' . $idField . ', ' . implode(',', $ids) . ')', false);
             } else {
                 $conditionFilters[] = '1=2';
-                //$list->setCondition("1=2");
             }
 
             $list->setCondition(implode(' AND ', $conditionFilters));
@@ -229,15 +230,11 @@ class AdminController extends UserAwareController
         $data = json_decode($request->get('filter'), true);
 
         if (empty($ids = $request->get('ids', false))) {
-            $results = $service->doFilter(
+            $ids = $service->getIdsFromFilterNoLimit(
                 $data['classId'],
                 $data['conditions']['filters'],
-                $data['conditions']['fulltextSearchTerm'],
-                0,
-                9999
+                $data['conditions']['fulltextSearchTerm']
             );
-
-            $ids = $service->extractIdsFromResult($results);
         }
 
         $jobs = array_chunk($ids, 20);
