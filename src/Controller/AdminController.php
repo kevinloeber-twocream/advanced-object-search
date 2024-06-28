@@ -104,7 +104,7 @@ class AdminController extends UserAwareController
         }
 
         if ($request->get('data')) {
-            return $this->forward('Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject\DataObjectController:gridProxyAction', [], $request->query->all());
+            return $this->forward('Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject\DataObjectController::gridProxyAction', [], $request->query->all());
         } else {
 
             // get list of objects
