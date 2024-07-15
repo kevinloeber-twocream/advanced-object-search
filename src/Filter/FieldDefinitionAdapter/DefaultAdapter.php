@@ -28,6 +28,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Normalizer\NormalizerInterface;
+use Pimcore\Model\Translation;
 
 class DefaultAdapter implements FieldDefinitionAdapterInterface
 {
@@ -245,7 +246,7 @@ class DefaultAdapter implements FieldDefinitionAdapterInterface
     {
         return [new FieldSelectionInformation(
             $this->fieldDefinition->getName(),
-            $this->fieldDefinition->getTitle(),
+            Translation::getByKeyLocalized($this->fieldDefinition->getTitle(), Translation::DOMAIN_ADMIN, true, true),
             $this->fieldType,
             [
                 'operators' => [BoolQuery::MUST, BoolQuery::SHOULD, BoolQuery::MUST_NOT, FilterEntry::EXISTS, FilterEntry::NOT_EXISTS],
